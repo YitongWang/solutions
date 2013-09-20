@@ -1,0 +1,17 @@
+commit 7d99508b5e087a79d3f362e46478afdadece71da
+Author: YitongWang <wang1368@purdue.edu>
+Date:   Fri Sep 13 16:19:16 2013 -0400
+
+    Update foo
+
+commit f5724521e316b76e8f7d5a742e239147aaab561d
+Author: Yitong Wang <wang1368@ecelinux03.ecn.purdue.edu>
+Date:   Fri Sep 13 16:03:54 2013 -0400
+
+    z
+
+commit b4d5eb0e122b448f5d18b42a466dc17f07d91eb7
+Author: Yitong Wang <wang1368@ecelinux03.ecn.purdue.edu>
+Date:   Fri Sep 13 16:02:53 2013 -0400
+
+    make sure this works
