@@ -29,13 +29,42 @@
  * = 2 + 1
  * = 3
  */
+void partprint(int *arr,int ind)
+{
+int i;
+  printf("= %d",arr[0]);
+  for(i = 1;i<ind;i++)
+    {
+       printf(" + %d",arr[i]);
+    }
+  printf("\n");
+}
+void all(int n,int * arr,int ind)
+{
+  int val;
+  if(n == 0)
+  {
+    partprint(arr,ind);
+  return; 
+  }
+for(val=1;val<=n;val++)
+{
 
+    arr[ind]=val;
+    all(n-val,arr,ind+1);
+}
 
+}
 void partitionAll(int value)
 {
   printf("partitionAll %d\n", value);
   
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+all(value,arr,ind);
+free(arr);
 }
+
 /*
  * =================================================================
  * This function prints the partitions that use increasing values.
@@ -55,11 +84,34 @@ void partitionAll(int value)
  *
  */
 
+void Increase(int n,int * arr,int ind)
+{
+  int val;
+if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
+
+for(val=1;val<=n;val++)
+  {
+    arr[ind]=val;
+    if(arr[ind]>arr[ind-1])
+      {
+    Increase(n-val,arr,ind+1);
+      }
+  }
+}
 
 void partitionIncreasing(int value)
 {
-  printf("partitionIncreasing %d\n", value);
 
+   printf("partitionIncreasing %d\n", value);
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+  Increase(value,arr,ind);
+  free(arr);
+  
 }
 
 /*
@@ -81,10 +133,35 @@ void partitionIncreasing(int value)
  *
  */
 
+void Decrease(int n,int * arr,int ind)
+{
+  int val;
+if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
 
+for(val=1;val<=n;val++)
+  {
+   arr[ind]=val;
+   if (ind > 0 &&arr[ind-1]>arr[ind])
+      {
+    Decrease(n-val,arr,ind+1);
+      }
+if(ind ==0)
+{
+Decrease(n-val,arr,ind+1);
+}
+  }
+}
 void partitionDecreasing(int value)
 {
   printf("partitionDecreasing %d\n", value);
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+  Decrease(value,arr,ind);
+  free(arr);
   
 
 }
@@ -106,13 +183,33 @@ void partitionDecreasing(int value)
  * generates invalid partitions and checks validity before printing.
  */
 
+void Odd(int n,int * arr,int ind)
+{
+ int val;
+ if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
+
+for(val=1;val<=n;val++)
+  {
+    arr[ind]=val;
+   if(arr[ind]%2==1)
+     {
+    Odd(n-val,arr,ind+1);
+     }
+  }
+}
 
 void partitionOdd(int value)
 {
-  printf("partitionOdd %d\n", value);
-  
+ printf("partitionOdd %d\n",value);
+ int * arr = malloc(value * sizeof(int));
+ int ind = 0;
+ Odd(value,arr,ind);
+ free(arr);
 }
-
 /*
  * =================================================================
  * This function prints even number only partitions of a positive integer value
@@ -131,11 +228,32 @@ void partitionOdd(int value)
  * The program should generate only valid partitions.  Do not
  * generates invalid partitions and checks validity before printing.
  */
+void Even(int n,int * arr,int ind)
+{
+  int val;
+  if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
+
+  for(val=1;val<=n;val++)
+  {
+    arr[ind]=val;
+    if(arr[ind]%2==0)
+      {
+    Even(n-val,arr,ind+1);
+      }
+  }
+}
 
 void partitionEven(int value)
 {
   printf("partitionEven %d\n", value);
-
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+  Even(value,arr,ind);
+  free(arr);
 }
 
 /*
@@ -156,11 +274,41 @@ void partitionEven(int value)
  * generates invalid partitions and checks validity before printing.
  */
 
+void OddEven(int n,int * arr,int ind,int max)
+{
+  int val;
+  if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
+
+  for(val=1;val<=n;val++)
+  {
+if(val == max&&val%2==0)
+{return;}
+  arr[ind]=val;
+if(arr[0]%2 == 1)
+{
+    if(ind > 0 && ((arr[ind]+arr[ind-1])%2 == 1))
+      { 
+    OddEven(n-val,arr,ind+1,max);
+      }
+}
+    if(ind == 0)
+     OddEven(n-val,arr,ind+1,max);
+  }
+}
+
 
 void partitionOddAndEven(int value)
 {
+
   printf("partitionOddAndEven %d\n", value);
-  
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+  OddEven(value,arr,ind,value);
+  free(arr);
 }
 
 /*
@@ -179,10 +327,51 @@ void partitionOddAndEven(int value)
  * generates invalid partitions and checks validity before printing.
  */
 
+int isprime(int *arr,int ind)
+{
+ int i;
+if (arr[ind]==1)
+{
+return 0;
+}
+if(arr[ind]==2)
+{
+return 1;
+}
+  for(i = 2; i <= arr[ind];i++)
+  {
+   if ((arr[ind] % i ==0) && (i != arr[ind]))
+    {
+      return 0;
+    }
+   
+  }
+return 1;
+}
+void Prime(int n,int * arr,int ind)
+{
+  int val;
+  if(n == 0)
+  {
+  partprint(arr,ind);
+  return;
+  }
 
+  for(val=1;val<=n;val++)
+  {
+    arr[ind]=val;
+    if(isprime(arr,ind))
+      {
+       Prime(n-val,arr,ind+1);
+      }
+  }
+}
 
 void partitionPrime(int value)
 {
   printf("partitionPrime %d\n", value);
-
+  int * arr = malloc(value * sizeof(int));
+  int ind = 0;
+  Prime(value,arr,ind);
+  free(arr);
 }

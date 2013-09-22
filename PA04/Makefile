@@ -1,4 +1,3 @@
-
 GCC = gcc
 CFLAGS = -g -Wall -Wshadow
 LIBS = -lm
@@ -62,7 +61,10 @@ ${TESTS}: test%: $(TARGET) | environment
 	@echo "test$*"
 	@echo '***************************************'
 	./$(TARGET) inputs/input0$* > outputs/output$*
-	cat outputs/output$* | sort | diff expected/output-sorted$* -
+	cat expected/output-sorted$* > temp
+	cat temp | sort -g > expected/output-sorted$*
+	rm temp
+	cat outputs/output$* | sort -g | diff expected/output-sorted$* -
 	$(VALGRIND) --log-file=outputs/memoutput$* ./$(TARGET) inputs/input0$* > /dev/null
 	@echo
 	@bin/valgrind-checker.sh outputs/memoutput$*
