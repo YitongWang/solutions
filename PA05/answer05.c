@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pa05.h"
-
 /*
  * Read a file of integers.
  *
@@ -63,27 +62,24 @@
 int * readInteger(char * filename, int * numInteger)
 {
   FILE *fptr;
-  fptr = fopen(filename,"r");
+  fptr=fopen(filename,"r");
   if(fptr == NULL)
     {
-     return NULL;
+      return NULL;
     }
   int counter = 0;
   int temp;
   while(fscanf(fptr,"%d",&temp)==1)
     {
-      counter++;
+      counter++; 
     }
-  *numInteger = counter;
+  *numInteger=counter;
   int *arr;
   arr = malloc(sizeof(int) * counter);
-  fclose(fptr);
-  fptr = fopen(filename,"r");
   fseek(fptr,0,SEEK_SET);
   int ind = 0;
-  while(fscanf(fptr,"%d",&temp) == 1)
+  while(fscanf(fptr,"%d",&arr[ind])==1)
     {
-      arr[ind] = temp;
       ind++;
     }
   fclose(fptr);
@@ -165,26 +161,26 @@ char * * readString(char * filename, int * numString)
     {
       return NULL;
     }
-  char buf[180];
+  char buf[MAXIMUM_LENGTH];
   // fscanf(fptr,"s",buf);
   //  fgets(buf,MAXLENGTH,fptr);
   
   int numLine=0;
-  while(fgets(buf,180,fptr) != NULL)
+  while(fgets(buf,MAXIMUM_LENGTH,fptr) != NULL)
     {
       numLine++;
     }
+  *numString = numLine;
   char * * strArr;
   strArr = malloc(sizeof(char *) * numLine);
   fseek(fptr,0,SEEK_SET);
   int ind = 0;
-  while(fgets(buf,180,fptr)!=NULL)
+  while(fgets(buf,MAXIMUM_LENGTH,fptr)!=NULL)
   {
        strArr[ind] = malloc(sizeof(char)*(strlen(buf)+1));
        strcpy(strArr[ind],buf);
        ind++;
   }
-  fclose(fptr);
   return strArr;
 }
 
@@ -196,7 +192,9 @@ void printInteger(int * arrInteger, int numInteger)
 {
   int i;
   for(i = 0;i < numInteger;i++)
-    printf("%d\n",arrInteger[i]);
+    { 
+      printf("%d\n",arrInteger[i]);
+    }
 }
 
 /* ----------------------------------------------- */
@@ -209,7 +207,12 @@ void printString(char * * arrString, int numString)
 {
   int i = 0;
   for(i=0;i < numString;i++)
-    printf("%s\n",arrString[i]);
+    {
+    printf("%s",arrString[i]);
+       int len = strlen(arrString[i]);
+       if(len == 0 || arrString[i][len-1]!='\n')
+        printf("\n");
+    }
 }
 
 /* ----------------------------------------------- */
@@ -256,13 +259,15 @@ void freeString(char * * arrString, int numString)
 
 int saveInteger(char * filename, int * arrInteger, int numInteger)
 {
-  FILE * fptr = fopen(filename,"r");
+  FILE * fptr = fopen(filename,"w");
   int i;
+   if(fptr == NULL)
+   { return 0;}
   for(i = 0;i<numInteger;i++)
     {
-      fprintf(fptr,"%d\n",arrInteger[i]);
-      
+      fprintf(fptr,"%d\n",arrInteger[i]);    
     }
+    fclose(fptr);
    return 1;
 }
 
@@ -286,12 +291,15 @@ int saveInteger(char * filename, int * arrInteger, int numInteger)
 
 int saveString(char * filename, char * * arrString, int numString)
 {
-  FILE * fptr = fopen(filename,"r");
+  FILE * fptr = fopen(filename,"w");
   int i;
+  if(fptr == NULL)
+    {return 0;}
   for(i = 0;i<numString;i++)
     {
       fprintf(fptr,"%s\n",arrString[i]);
     }
+   fclose(fptr);
    return 1;
 }
 
@@ -304,19 +312,11 @@ int saveString(char * filename, char * * arrString, int numString)
  */
 int compint(const void * p1,const void * p2)
 {
-  int * input1 = (int *) p1;
-  int * input2 = (int *) p1;
-  int intv1 = * input1;
-  int intv2 = * input2;
-  if(intv1 < intv2)
-    {return -1;}
-  if(intv1 == intv2)
-    {return 0;}
-  return 1;
+  return (*(int*)p1 - *(int*)p2);
 }
 void sortInteger(int * arrInteger, int numInteger)
 {
-  qsort(arrInteger,numInteger,sizeof(char *),compint);
+   qsort(arrInteger,numInteger,sizeof(int),compint);
 }
 
 
@@ -331,15 +331,7 @@ void sortInteger(int * arrInteger, int numInteger)
  */
 int compstr(const void * p1,const void * p2)
 {
-  int * input1 = (int *) p1;
-  int * input2 = (int *) p1;
-  char charv1 = * input1;
-  char charv2 = * input2;
-  if(charv1 < charv2)
-    {return -1;}
-  if(charv1 == charv2)
-    {return 0;}
-  return 1;
+  return(strcmp(*(char**)p1,*(char**)p2));
 }
 void sortString(char * * arrString, int numString)
 {
