@@ -237,6 +237,7 @@ void freeString(char * * arrString, int numString)
     {
       free(arrString[i]);
     }
+  free(arrString);
 }
 
 /* ----------------------------------------------- */
@@ -336,6 +337,7 @@ int compstr(const void * p1,const void * p2)
 void sortString(char * * arrString, int numString)
 {
   qsort(arrString,numString,sizeof(char *),compstr);
+
 }
 
 
