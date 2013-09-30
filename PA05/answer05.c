@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pa05.h"
-#define MAXIMUM_LENGTH 80
 
 /*
  * Read a file of integers.
@@ -63,6 +62,34 @@
 
 int * readInteger(char * filename, int * numInteger)
 {
+  FILE *fptr;
+  fptr = fopen(filename,"r");
+  if(fptr == NULL)
+    {
+     return NULL;
+    }
+  int counter = 0;
+  int temp;
+  while(fscanf(fptr,"%d",&temp)==1)
+    {
+      counter++
+    }
+  *numIntegers = counter;
+  int *arr
+  arr = malloc(sizeof(int) * counter);
+  fclose(fptr);
+  fptr = fopen(filename,"r");
+  fseek(fptr,0,SEEK_SET);
+  int ind = 0;
+  while(fscanf(fptr,"%d",&temp) == 1)
+    {
+      arr[ind] = temp;
+      ind++;
+    }
+  fclose(fptr);
+  return arr;
+
+
 }
 
 /* ----------------------------------------------- */
@@ -133,6 +160,32 @@ int * readInteger(char * filename, int * numInteger)
 
 char * * readString(char * filename, int * numString)
 {
+  FILE * fptr = fopen(filename,"r");
+  if(fptr == NULL)
+    {
+      reutrn EXIT_FAILURE;
+    }
+  char buf;
+  // fscanf(fptr,"s",buf);
+  //  fgets(buf,MAXLENGTH,fptr);
+  
+  int numLine=0;
+  while(fgets(buf,MAXLENGTH,fptr) != NULL)
+    {
+      numLine;
+    }
+  char * * strArr;
+  strArr = malloc(sizeof(char *) * numLine);
+  fseek(fptr,0,SEEK_SET);
+  int ind = 0;
+  while(fgets(buf,MAXLENGTH,fptr)!=NULL)
+  {
+       strArr[ind] = malloc(sizeof(char)*(strlen(buf)+1));
+       strcpy(strArr[ind],buf);
+       ind++;
+  }
+  fclose(fptr);
+  return strArr;
 }
 
 /* ----------------------------------------------- */
@@ -141,6 +194,9 @@ char * * readString(char * filename, int * numString)
  */
 void printInteger(int * arrInteger, int numInteger)
 {
+  int i;
+  for(i = 0;i<numInteger;i++)
+    printf("%d\n",arrInteger[i]);
 }
 
 /* ----------------------------------------------- */
@@ -151,6 +207,9 @@ void printInteger(int * arrInteger, int numInteger)
  */
 void printString(char * * arrString, int numString)
 {
+  int i = 0;
+  for(i=0;i < numString;i++)
+    printf("%s\n",arrString[i]);
 }
 
 /* ----------------------------------------------- */
@@ -159,6 +218,11 @@ void printString(char * * arrString, int numString)
  */
 void freeInteger(int * arrInteger, int numInteger)
 {
+  int i;
+  for(i = 0;i<numInteger;i++)
+    {
+      free(arrInteger[i]);
+    }
 }
 
 /* ----------------------------------------------- */
@@ -169,6 +233,11 @@ void freeInteger(int * arrInteger, int numInteger)
  */
 void freeString(char * * arrString, int numString)
 {
+  int i;
+  for(i = 0;i<numString;i++)
+    {
+      free(arrString[i]);
+    }
 }
 
 /* ----------------------------------------------- */
@@ -191,6 +260,14 @@ void freeString(char * * arrString, int numString)
 
 int saveInteger(char * filename, int * arrInteger, int numInteger)
 {
+  FILE * fptr = fopen(filename,"r");
+  int i;
+  for(i = 0;i<numInteger;i++)
+    {
+      fprintf(fptr,"%d\n",arrInteger[i]);
+      
+    }
+   return 1;
 }
 
 /* ----------------------------------------------- */
@@ -213,6 +290,13 @@ int saveInteger(char * filename, int * arrInteger, int numInteger)
 
 int saveString(char * filename, char * * arrString, int numString)
 {
+  FILE * fptr = fopen(filename,"r");
+  int i;
+  for(i = 0;i<numString;i++)
+    {
+      fprintf(fptr,"%d\n",arrInString[i]);
+    }
+   return 1;
 }
 
 /* ----------------------------------------------- */
@@ -225,6 +309,7 @@ int saveString(char * filename, char * * arrString, int numString)
 
 void sortInteger(int * arrInteger, int numInteger)
 {
+
 }
 
 
@@ -237,7 +322,6 @@ void sortInteger(int * arrInteger, int numInteger)
  * Hint: use strcmp in the comparison function
  *
  */
-
 
 void sortString(char * * arrString, int numString)
 {
