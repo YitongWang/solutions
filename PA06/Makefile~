@@ -1,0 +1,13 @@
+GCC = gcc
+CFLAGS = -g -Wall -Wshadow
+OBJS = answer06.o pa06.o
+HDRS = pa06.h
+VALGRIND = valgrind --tool=memory -- leak-check=full --verbose
+
+pa06: $(OBJS) $(HDRS)
+        $(GCC) $(CFLAGS) $(OBJS) -o $@
+clean:
+      rm -f pa06 $(OBJS) outputs/*
+
+test0: pa06
+        @$(VALGRIND) --log-file=outputs/output01 ./pa06 images/01-unnormalized-smile.ee264 outputs/  

@@ -119,7 +119,7 @@
  *
  * The next N bytes is a null-termianted ASCII string. The length of
  * the string is specified in the last field of the header. The length
- * _includes_ the trailing NULL byte.
+ * _includes_ the trailing NULL byte. 
  *
  * After the ASCII string, there are width*height bytes of pixel data.
  * Each byte is /unsigned/, and represents the intensity of a pixel in
@@ -129,21 +129,21 @@
  *
  * The pixels are stored in "row-major-order" from top-to-bottom. 
  * That means that the first byte if the intensity of pixel [0, 0], 
- * which is the top-left corner of the image. After reading "width" 
+ * which is the top-left corner of the image. After reading "width"  
  * number of pixels, you will arrive at the start of the second row 
  * of pixels, which is the intensity of coordinate [0, 1]: the first
  * pixel of the second line of the image.
  *
- * In general, pixel[x, y] == image->data[x + y * width] where (x, y)
+ * In general, pixel[x, y] == image->data[x + y * width] where (x, y) 
  * is the x-y co-ordinate of the pixel, with x increasing left-to-
  * right, and y increasing top-to-bottom.
  *
- * To complete this function, you must:
+ * To complete this function, you must: 
  * (1)  use fopen to open the file and check that the file was truly 
  *      opened
  * (2)  read the 16 byte header, checking that you actually read 16 
  *      bytes. (There is no guarantee that the input file is 16 bytes
- *      long.)
+ *      long.) 
  * (3)  Check that the magic-bits match ECE264_IMAGE_MAGIC_BITS.
  * (4)  Check that the image width and height is sane. (i.e., > zero.)
  * (5)  Malloc memory for the comment. (The comment_len _includes_ the
@@ -172,7 +172,93 @@
  */
 struct Image * loadImage(const char* filename)
 {
+struct ImageHeader hdr;
+FILE * fptr = fopen(filename, "r");
+if(fptr == NULL)
+  {
+    fclose(fptr);
     return NULL;
+  }
+ int retval;
+ retval = fread(&hdr, sizeof(struct ImageHeader), 1, fptr); 
+ if (hdr.magic_bits != ECE264_IMAGE_MAGIC_BITS)
+  {
+    fclose(fptr);
+    return NULL;
+  }
+ if (retval != 1)
+  {
+    //error
+    fclose(fptr);
+    return NULL;
+  }
+
+ if (hdr.width <= 0)
+  {
+    //error
+    fclose(fptr);
+    return NULL;
+  }
+ if (hdr.height <= 0)
+   {
+    //error
+    fclose(fptr);
+    return NULL;
+   }
+ 
+
+struct Image * img = malloc(sizeof(struct Image));
+ if(img ==NULL)
+   {
+     free(img);
+     fclose(fptr);
+     return NULL;
+   }
+
+ img -> width = hdr.width;
+ img -> height = hdr.height;
+
+ img -> comment = malloc(sizeof(char) * hdr.comment_len);
+ if(img->comment == NULL)
+   {
+     printf("fail");
+     free(img->comment);
+     free(img);
+     fclose(fptr);
+     return NULL;
+   }
+
+ img -> data = malloc(sizeof(uint8_t) * hdr.width * hdr.height);
+
+ retval = fread(img->comment, sizeof(char),hdr.comment_len, fptr);//change comment
+
+ if (retval != hdr.comment_len)
+   {
+     free(img->comment);
+     free(img);
+     fclose(fptr);
+     return NULL;
+   }
+ retval = fread(img->data, sizeof(uint8_t), hdr.width * hdr.height, fptr);
+ if(retval != (hdr.width * hdr.height))
+   {
+     free(img->comment);
+     free(img->data);
+     free(img);
+     fclose(fptr);
+     return NULL;
+   }
+ retval = fread(img->data,sizeof(uint8_t),1, fptr);
+ if (retval == 1)
+   {
+     free(img->comment);
+     free(img->data);
+     free(img);
+     fclose(fptr);
+     return NULL;
+   }
+ fclose(fptr);  
+ return img;
 }
 
 
@@ -188,12 +274,18 @@ struct Image * loadImage(const char* filename)
  */
 void freeImage(struct Image * image)
 {
+  if(image != NULL)
+    {
+     free (image -> data);
+     free (image -> comment);
+    }
+free (image);
 
 }
 
 /*
  * ===================================================================
- * Performs "linear normalization" on the passed image
+ * Performs "linear normalization" on the passed image 
  *
  * Imagine that the intensity values in your input image are in the 
  * range [50..180]. The image looks gray and washed out. You can 
@@ -207,7 +299,7 @@ void freeImage(struct Image * image)
  *     
  *        pixel[i] = (pixel[i] - min) * 255.0 / (max - min)
  *
- * That's it! For the above example the equation is:
+ * That's it! For the above example the equation is:  
  *
  *        pixel[i] = (pixel[i] - 50) * 255.0 / (180 - 50)
  *
@@ -217,7 +309,25 @@ void freeImage(struct Image * image)
  */
 void linearNormalization(struct Image * image)
 {
-
+  int i = 0;
+  int j = 0;
+  int max = image->data[i];
+  int min = image->data[i];
+  for(i = 0;i < image->width * image->height;i++)
+    {
+      if(image->data[i] > max)
+	{
+	  max = image->data[i];
+	}
+      if(image->data[i] < min)
+	{
+	  min = image->data[i];
+	}
+    }
+  for(j = 0;j < image->width * image->height;j++)
+    {
+      image->data[j] = (image->data[j] - min) * 255.0/(max - min);
+    }
 }
 
 
